@@ -1,12 +1,62 @@
 <?php 
 
-require_once ("CONFIG.PHP");
+class Usuario {
 
-$sql = new SQL();
+	private $id_usuario;
+	private $login;
+	private $senha;
+	private $dtcadastro;
+	
+	public function getId_usuario(){
+		return $this->id_usuario;		
+	}
+	public function setId_usuario($value){
+		$this->id_usuario = $value;		
+	}
+	//--------------------------------------
+	public function getLogin(){
+		return $this->login;		
+	}
+	public function setLogin($value){
+		$this->login = $value;		
+	}
+	//--------------------------------------
+	public function getSenha(){
+		return $this->senha;		
+	}
+	public function setSenha($value){
+		$this->senha = $value;		
+	}
+	//--------------------------------------
+	public function getDtcadastro(){
+		return $this->dtcadastro;		
+	}
+	public function setDtcadastro($value){
+		$this->dtcadastro = $value;		
+	}
 
-$usuarios=$sql->select("SELECT * FROM usuarios");
+	public function loadById($id){
 
-echo json_encode($usuarios);
+		$sql = new SQL();
 
+		$results = $sql->select("SELECT * FROM usuarios WHERE id_usuario = :ID", array(":ID"=>$id));
+		if(count($results) > 0){
 
+			$row = $results[0];
+
+			$this->setId_usuario($row['id_usuario']);
+			$this->setLogin($row['login']);
+			$this->setSenha($row['senha']);
+			$this->setDtcadastro(new DateTime($row['data_cadastro']));
+		}
+	}
+	public function __toString(){
+		return json_encode(array(
+			"id_usuario"=>$this->getId_usuario(),
+			"login"=>$this->getLogin(),
+			"senha"=>$this->getSenha(),
+			"data_cadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
+		));
+	}
+}
 ?>
