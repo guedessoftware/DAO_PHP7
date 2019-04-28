@@ -50,6 +50,44 @@ class Usuario {
 			$this->setDtcadastro(new DateTime($row['data_cadastro']));
 		}
 	}
+
+	public function login($login, $password){
+		$sql = new SQL();
+
+		$results = $sql->select("SELECT * FROM usuarios WHERE login = :LOGIN AND senha = :PASSWORD", array(
+				":LOGIN"=>$login,
+				":PASSWORD"=>$password
+			));
+
+		if(count($results) > 0){
+
+			$row = $results[0];
+
+			$this->setId_usuario($row['id_usuario']);
+			$this->setLogin($row['login']);
+			$this->setSenha($row['senha']);
+			$this->setDtcadastro(new DateTime($row['data_cadastro']));
+
+		} else {
+
+			throw new Exception("Login e/ou senha inváidos.");
+		}	//echo "erro";
+	}
+
+	public static function listaUsuarios(){
+
+		$sql = new SQL();
+
+		return $sql->select("SELECT * FROM usuarios ORDER BY id_usuario;");
+	}
+
+	public static function pesquisa($login){
+		$sql = new SQL();
+
+		return $sql->select("SELECT * FROM usuarios WHERE login LIKE :SEARCH ORDER BY login", array(':SEARCH'=>"%".$login."%"
+		));
+	}
+	
 	public function __toString(){
 		return json_encode(array(
 			"id_usuario"=>$this->getId_usuario(),
